@@ -113,30 +113,40 @@ public class BookingManager {
     }
 
     // Cancel booking and release seats
-    public void cancelBooking(int bookingId) {
+   // Cancel booking with proper validation
+public void cancelBooking(int bookingId) {
 
-        for (Booking booking : bookings) {
+    if (bookingId <= 0) {
+        System.out.println("Invalid booking ID!");
+        return;
+    }
 
-            if (booking.getBookingId() == bookingId
-                    && !booking.isCancelled()) {
+    for (Booking booking : bookings) {
 
-                String showKey = booking.getMovie().getMovieId()
-                        + "_" + booking.getShowtime();
+        if (booking.getBookingId() == bookingId) {
 
-                seatManager.releaseSeats(
-                        showKey,
-                        booking.getSelectedSeats()
-                );
-
-                booking.cancelBooking();
-
-                System.out.println("\nBooking cancelled successfully!");
+            if (booking.isCancelled()) {
+                System.out.println("This booking is already cancelled!");
                 return;
             }
-        }
 
-        System.out.println("Booking ID not found or already cancelled.");
+            String showKey = booking.getMovie().getMovieId()
+                    + "_" + booking.getShowtime();
+
+            seatManager.releaseSeats(
+                    showKey,
+                    booking.getSelectedSeats()
+            );
+
+            booking.cancelBooking();
+
+            System.out.println("Booking cancelled successfully!");
+            return;
+        }
     }
+
+    System.out.println("Booking ID not found!");
+}
 
     // Display booking history summary and revenue
     public void displayBookingSummary() {
